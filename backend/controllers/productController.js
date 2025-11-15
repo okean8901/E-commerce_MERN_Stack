@@ -60,15 +60,24 @@ export const getProductById = async (req, res) => {
 // Create product (Admin only)
 export const createProduct = async (req, res) => {
   try {
-    const { name, description, price, stockQuantity, imageUrl, categoryId } = req.body;
+    const { name, description, price, stockQuantity, imageUrl, images, imagesString, categoryId, variants } = req.body;
+
+    const imagesArray = Array.isArray(images)
+      ? images
+      : imagesString
+      ? imagesString.split(',').map((s) => s.trim()).filter(Boolean)
+      : imageUrl
+      ? [imageUrl]
+      : [];
 
     const product = new Product({
       name,
       description,
       price,
       stockQuantity,
-      imageUrl,
-      categoryId
+      images: imagesArray,
+      categoryId,
+      variants: variants || []
     });
 
     await product.save();
@@ -81,11 +90,20 @@ export const createProduct = async (req, res) => {
 // Update product (Admin only)
 export const updateProduct = async (req, res) => {
   try {
-    const { name, description, price, stockQuantity, imageUrl, categoryId, isActive } = req.body;
+    const { name, description, price, stockQuantity, imageUrl, images, imagesString, categoryId, isActive, variants } = req.body;
+
+    let imagesArray;
+    if (Array.isArray(images)) imagesArray = images;
+    else if (imagesString) imagesArray = imagesString.split(',').map((s) => s.trim()).filter(Boolean);
+    else if (imageUrl) imagesArray = [imageUrl];
+
+    const update = { name, description, price, stockQuantity, categoryId, isActive };
+    if (imagesArray !== undefined) update.images = imagesArray;
+    if (variants !== undefined) update.variants = variants;
 
     const product = await Product.findByIdAndUpdate(
       req.params.id,
-      { name, description, price, stockQuantity, imageUrl, categoryId, isActive },
+      update,
       { new: true, runValidators: true }
     );
 

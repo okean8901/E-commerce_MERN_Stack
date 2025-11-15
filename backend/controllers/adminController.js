@@ -146,10 +146,9 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-// Create product
 export const createProduct = async (req, res) => {
   try {
-    const { name, description, price, categoryId, stock, image } = req.body;
+    const { name, description, price, categoryId, stockQuantity, image, images, imageUrl, variants } = req.body;
 
     // Validation
     if (!name || !price || !categoryId) {
@@ -167,8 +166,17 @@ export const createProduct = async (req, res) => {
       description,
       price,
       categoryId,
-      stock: stock || 0,
-      image,
+      stockQuantity: stockQuantity || 0,
+      images: Array.isArray(images)
+        ? images
+        : images && typeof images === 'string'
+        ? images.split(',').map((s) => s.trim()).filter(Boolean)
+        : image
+        ? [image]
+        : imageUrl
+        ? [imageUrl]
+        : [],
+      variants: variants || [],
       isActive: true
     });
 
@@ -188,7 +196,7 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, price, categoryId, stock, image, isActive } = req.body;
+    const { name, description, price, categoryId, stockQuantity, image, images, imageUrl, isActive, variants } = req.body;
 
     const product = await Product.findById(id);
     if (!product) {
@@ -199,8 +207,12 @@ export const updateProduct = async (req, res) => {
     if (description) product.description = description;
     if (price) product.price = price;
     if (categoryId) product.categoryId = categoryId;
-    if (stock !== undefined) product.stock = stock;
-    if (image) product.image = image;
+    if (stockQuantity !== undefined) product.stockQuantity = stockQuantity;
+    if (Array.isArray(images)) product.images = images;
+    else if (images && typeof images === 'string') product.images = images.split(',').map((s) => s.trim()).filter(Boolean);
+    else if (image) product.images = [image];
+    else if (imageUrl) product.images = [imageUrl];
+    if (variants !== undefined) product.variants = variants;
     if (isActive !== undefined) product.isActive = isActive;
 
     await product.save();

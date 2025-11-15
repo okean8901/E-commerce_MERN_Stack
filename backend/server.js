@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
+import User from './models/User.js';
 
 // Load environment variables
 dotenv.config();
@@ -36,7 +37,31 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
+.then(async () => {
+  console.log('MongoDB connected');
+
+  // Ensure admin user exists (seed on startup)
+  try {
+    const adminEmail = 'admin@okeanmobile.com';
+    const adminExists = await User.findOne({ email: adminEmail });
+    if (adminExists) {
+      console.log('Admin user already exists');
+    } else {
+      // Create admin with default password '123456'
+      await User.create({
+        username: 'admin',
+        email: adminEmail,
+        password: '123456',
+        fullName: 'Admin',
+        role: 'Admin',
+        isActive: true
+      });
+      console.log('✓ Admin user seeded: admin@okeanmobile.com / 123456');
+    }
+  } catch (seedErr) {
+    console.error('Error seeding admin user:', seedErr);
+  }
+})
 .catch(err => console.log('MongoDB connection error:', err));
 
 // Routes

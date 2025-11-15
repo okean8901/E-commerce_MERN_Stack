@@ -54,17 +54,19 @@ const cartSlice = createSlice({
           price: payload.price,
           imageUrl: payload.imageUrl,
           quantity: payload.quantity,
+          selectedVariants: payload.selectedVariants || {},
+          priceAdjustment: payload.priceAdjustment || 0,
         })
       }
       
       state.totalItems = state.items.reduce((sum, item) => sum + item.quantity, 0)
-      state.totalPrice = state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+      state.totalPrice = state.items.reduce((sum, item) => sum + ((item.price + (item.priceAdjustment || 0)) * item.quantity), 0)
       saveCartToStorage(state)
     },
     removeFromCart: (state, action) => {
       state.items = state.items.filter(item => item.productId !== action.payload)
       state.totalItems = state.items.reduce((sum, item) => sum + item.quantity, 0)
-      state.totalPrice = state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+      state.totalPrice = state.items.reduce((sum, item) => sum + ((item.price + (item.priceAdjustment || 0)) * item.quantity), 0)
       saveCartToStorage(state)
     },
     updateQuantity: (state, action) => {
@@ -73,7 +75,7 @@ const cartSlice = createSlice({
         item.quantity = Math.max(1, action.payload.quantity)
       }
       state.totalItems = state.items.reduce((sum, item) => sum + item.quantity, 0)
-      state.totalPrice = state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+      state.totalPrice = state.items.reduce((sum, item) => sum + ((item.price + (item.priceAdjustment || 0)) * item.quantity), 0)
       saveCartToStorage(state)
     },
     clearCart: (state) => {

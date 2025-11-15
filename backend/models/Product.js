@@ -23,9 +23,32 @@ const productSchema = new mongoose.Schema(
       min: [0, 'Số lượng phải lớn hơn hoặc bằng 0'],
       default: 0
     },
-    imageUrl: {
-      type: String
+    images: {
+      type: [String],
+      default: []
     },
+    variants: [
+      {
+        type: {
+          type: String,
+          enum: ['Storage', 'Color'],
+          required: true
+        },
+        name: {
+          type: String,
+          required: true
+        },
+        options: [
+          {
+            value: String,
+            priceAdjustment: {
+              type: Number,
+              default: 0
+            }
+          }
+        ]
+      }
+    ],
     isActive: {
       type: Boolean,
       default: true

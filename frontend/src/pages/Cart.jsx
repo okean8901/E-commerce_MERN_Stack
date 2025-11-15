@@ -61,8 +61,14 @@ function Cart() {
                   />
                   <div className="flex-grow">
                     <h3 className="font-semibold">{item.productName}</h3>
+                    {item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
+                      <p className="text-xs text-gray-500 mb-1">
+                        {Object.entries(item.selectedVariants).map(([key, val]) => `${key}: ${val}`).join(', ')}
+                      </p>
+                    )}
                     <p className="text-gray-600 text-sm mb-2">
-                      Giá: {item.price.toLocaleString('vi-VN')}₫
+                      Giá: {(item.price + (item.priceAdjustment || 0)).toLocaleString('vi-VN')}₫
+                      {item.priceAdjustment > 0 && <span className="text-xs text-gray-500 ml-1">(+{item.priceAdjustment.toLocaleString('vi-VN')}₫)</span>}
                     </p>
                     <div className="flex items-center gap-2 mb-2">
                       <label>Số lượng:</label>
@@ -75,7 +81,7 @@ function Cart() {
                       />
                     </div>
                     <p className="font-semibold text-blue-600">
-                      Tổng: {(item.quantity * item.price).toLocaleString('vi-VN')}₫
+                      Tổng: {((item.price + (item.priceAdjustment || 0)) * item.quantity).toLocaleString('vi-VN')}₫
                     </p>
                   </div>
                   <button

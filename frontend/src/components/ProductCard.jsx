@@ -13,7 +13,7 @@ function ProductCard({ product }) {
       productId: product._id,
       productName: product.name,
       price: product.price,
-      imageUrl: product.imageUrl,
+      imageUrl: (product.images && product.images.length > 0) ? product.images[0] : product.imageUrl,
       quantity: 1,
     }))
     toast.success('Thêm vào giỏ hàng thành công')
@@ -23,7 +23,7 @@ function ProductCard({ product }) {
     <div className="card hover:shadow-lg transition-shadow">
       <Link to={`/products/${product._id}`}>
         <img
-          src={product.imageUrl || '/placeholder.png'}
+          src={(product.images && product.images.length > 0) ? product.images[0] : (product.imageUrl || '/placeholder.png')}
           alt={product.name}
           className="w-full h-48 object-cover rounded mb-4"
         />

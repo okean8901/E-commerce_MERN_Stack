@@ -151,12 +151,7 @@ function Login() {
             </Link>
           </div>
 
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-600">
-            <p className="text-xs text-gray-600 font-medium mb-2">💡 Tài khoản demo:</p>
-            <p className="text-xs text-gray-600">Email: <span className="font-mono">admin@okeanmobile.com</span></p>
-            <p className="text-xs text-gray-600">Pass: <span className="font-mono">123456</span></p>
-          </div>
+          {/* Demo credentials removed as requested */}
         </div>
       </div>
     </div>
